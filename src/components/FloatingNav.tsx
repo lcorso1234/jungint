@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState, type SVGProps } from "react";
+import { useState, type SVGProps, type ReactNode } from "react";
 
 const navLinks = [
   { label: "Home", href: "/" },
@@ -37,7 +37,7 @@ const quickActions = [
 type MobileAction = {
   label: string;
   href: string;
-  icon: (props: SVGProps<SVGSVGElement>) => JSX.Element;
+  icon: (props: SVGProps<SVGSVGElement>) => ReactNode;
   download?: string;
   animate?: boolean;
   onClick?: () => void;
