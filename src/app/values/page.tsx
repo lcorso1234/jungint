@@ -27,9 +27,8 @@ export default function ValuesPage() {
             {
               label: "Product",
               title: "The Genius Engine",
-              
               body:
-                "The mitochondria for a small business that keeps them going through the beautiful times and worst times.",
+                "Our proprietary automation stack that powers launches, audits, and ongoing support for small businesses.",
             },
           ].map((item) => (
             <section
@@ -43,11 +42,6 @@ export default function ValuesPage() {
                 {item.title}
               </h2>
               <p className="text-base text-slate-200 sm:text-lg">{item.body}</p>
-              {item.extra && (
-                <p className="text-base text-slate-200/80 sm:text-lg">
-                  {item.extra}
-                </p>
-              )}
             </section>
           ))}
         </div>

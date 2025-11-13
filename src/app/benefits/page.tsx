@@ -15,7 +15,7 @@ const checklist = [
   "track improved ROI",
   "AND most importantly, give you time back throughout the work week to do the things you love to do (FREEDOM)!",
   "No more staring at the computer screen copying and pasting to every platform. One click and we have you covered.",
-  '"Blah blah blah", yep. Done.',
+  `"Blah blah blah", yep. Done.`,
   "It's that easy.",
   "Give us a call or schedule time with us today. Before last-minute shopping for gifts! (Busted! 😁)",
 ];
@@ -33,7 +33,7 @@ export default function BenefitsPage() {
             Save thousands right off the back and stay heard.
           </p>
           <p className="text-lg text-white/80">
-            Give us a call or simply connect with us when you're ready to get started. We can’t wait to help you take your business to the next level.
+            Give us a call or simply connect with us when you&apos;re ready to get started. We can’t wait to help you take your business to the next level.
           </p>
           <div className="grid gap-4 text-sm font-semibold uppercase tracking-[0.35em] text-white/70 sm:grid-cols-2">
             {callouts.map((text) => (
