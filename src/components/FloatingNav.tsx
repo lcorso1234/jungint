@@ -53,11 +53,6 @@ export default function FloatingNav() {
   const pathname = usePathname();
   const [hasSavedContact, setHasSavedContact] = useState(false);
 
-  const currentIndex = navLinks.findIndex((link) => link.href === pathname);
-  const safeIndex = currentIndex === -1 ? 0 : currentIndex;
-  const nextNavLink = navLinks[(safeIndex + 1) % navLinks.length];
-  const prevNavLink =
-    navLinks[(safeIndex - 1 + navLinks.length) % navLinks.length];
 
   return (
     <nav className="fixed bottom-4 left-1/2 z-50 w-full max-w-5xl -translate-x-1/2 px-4">
@@ -110,14 +105,13 @@ export default function FloatingNav() {
 
       <div className="lg:hidden">
         <div className="mx-auto w-full max-w-sm rounded-[8px] border border-white/10 bg-[#353e43] p-3 text-white shadow-[0_18px_45px_rgba(0,0,0,0.35)]">
-          <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-3">
             <MobileActionButton
               {...mobileSaveAction}
               animate={!hasSavedContact}
               onClick={() => setHasSavedContact(true)}
             />
-            <DirectionalNavButton label="Prev" target={prevNavLink} reverse />
-            <DirectionalNavButton label="Next" target={nextNavLink} />
+            <MobileNextButton currentPath={pathname} />
           </div>
         </div>
       </div>
@@ -193,45 +187,6 @@ function ContactCardIcon(props: SVGProps<SVGSVGElement>) {
   );
 }
 
-type DirectionalProps = {
-  label: string;
-  target: { label: string; href: string };
-  onNavigate?: () => void;
-  reverse?: boolean;
-};
-
-function DirectionalNavButton({
-  label,
-  target,
-  onNavigate,
-  reverse,
-}: DirectionalProps) {
-  return (
-    <Link
-      href={target.href}
-      aria-label={`${label} page: ${target.label}`}
-      onClick={() => onNavigate?.()}
-      className="group flex min-w-[118px] flex-col items-center rounded-[8px] border border-white/25 bg-[#2a3237] px-3 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-white transition hover:border-white/60"
-    >
-      <span className="text-[10px] tracking-[0.4em] text-white/70">
-        {label}
-      </span>
-      <span className="flex items-center gap-2 text-sm capitalize">
-        {reverse && (
-          <ArrowIcon
-            className="h-4 w-4 text-white transition group-hover:-translate-x-1 motion-safe:group-hover:animate-pulse"
-            reverse
-          />
-        )}
-        {target.label}
-        {!reverse && (
-          <ArrowIcon className="h-4 w-4 text-white transition group-hover:translate-x-1 motion-safe:group-hover:animate-pulse" />
-        )}
-      </span>
-    </Link>
-  );
-}
-
 function ArrowIcon({
   reverse,
   ...props
@@ -258,5 +213,26 @@ function ArrowIcon({
         strokeLinejoin="round"
       />
     </svg>
+  );
+}
+
+function MobileNextButton({ currentPath }: { currentPath: string }) {
+  const homeIndex = navLinks.findIndex((link) => link.href === "/");
+  const currentIndex = navLinks.findIndex((link) => link.href === currentPath);
+  const baseIndex = currentIndex === -1 ? homeIndex : currentIndex;
+  const nextLink = navLinks[(baseIndex + 1) % navLinks.length];
+
+  return (
+    <Link
+      href={nextLink.href}
+      className="flex flex-1 items-center justify-between rounded-[8px] border border-white/25 bg-[#2a3237] px-4 py-3 text-xs font-semibold uppercase tracking-[0.3em] text-white transition hover:border-white/60"
+      aria-label={`Go to ${nextLink.label}`}
+    >
+      <span className="text-white/70">Next</span>
+      <span className="flex items-center gap-2 text-sm">
+        {nextLink.label}
+        <ArrowIcon className="h-4 w-4 text-white" />
+      </span>
+    </Link>
   );
 }
