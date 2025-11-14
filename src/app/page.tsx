@@ -1,6 +1,22 @@
+/**
+ * Home hero image doubles as a quick "save contact" CTA.
+ */
+"use client";
+
 import Image from "next/image";
+import { useCallback } from "react";
 
 export default function HomePage() {
+  const handleSaveContact = useCallback(() => {
+    const link = document.createElement("a");
+    link.href = "/contact.vcf";
+    link.download = "jung-tech-contact.vcf";
+    link.style.display = "none";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }, []);
+
   return (
     <div className="relative min-h-screen overflow-hidden bg-[#353e43] text-white">
       <main className="mx-auto flex min-h-screen max-w-5xl flex-col gap-12 px-6 py-20 pb-44 text-left text-[18px] leading-relaxed sm:px-8 lg:flex-row lg:items-center lg:pb-48">
@@ -16,7 +32,12 @@ export default function HomePage() {
           </p>
         </div>
         <div className="flex-1">
-          <div className="relative mx-auto aspect-square w-full max-w-[420px]">
+          <button
+            type="button"
+            onClick={handleSaveContact}
+            className="relative mx-auto block aspect-square w-full max-w-[420px] rounded-[18px] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white/80"
+            aria-label="Tap the hero image to save Jung Tech contact info"
+          >
             <Image
               src="/robin.png"
               alt="Hooded technologist working on a laptop"
@@ -25,7 +46,7 @@ export default function HomePage() {
               sizes="(max-width: 768px) 80vw, 420px"
               priority
             />
-          </div>
+          </button>
         </div>
       </main>
     </div>
