@@ -25,7 +25,7 @@ export default function HomePage() {
             Your behind the scenes tech guy.
           </p>
           <p className="text-4xl font-black leading-tight text-white sm:text-5xl">
-            CONTROL ALL OF YOUR ASSETTS.
+            CONTROL ALL OF YOUR ASSETS.
           </p>
           <p className="text-base text-white/80">
             Quietly powering founders who want ownership without the noise.
