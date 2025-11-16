@@ -10,36 +10,26 @@ export default function ValuesPage() {
             Control all of your assets.
           </p>
           <p className="text-base text-white/80">
-            Architecture guided by American product sensibilities, designed in
-            Ukraine, and implemented with relentless polish.
+            The vision built in America, and designed in Ukraine (Design Capital
+            of the World), and implemented with relentless polish.
           </p>
         </section>
 
         <section className="space-y-2">
-          <p className="text-2xl font-semibold text-white">
-            American Style
-          </p>
+          <p className="text-2xl font-semibold text-white">The American Way</p>
           <p className="text-base text-white/80">
-            Independent work that keeps you and your clients in control of every
-            output.
-          </p>
-        </section>
-
-        <section className="space-y-2">
-          <p className="text-2xl font-semibold text-white">
-            Ukraine Designed
-          </p>
-          <p className="text-base text-white/80">
-            Relentless iteration with attention to detail so your business meets
-            international design standards.
+            Internationally bred and born in adversity.
           </p>
         </section>
 
         <section className="space-y-2">
           <p className="text-2xl font-semibold text-white">The Genius Engine</p>
           <p className="text-base text-white/80">
-            Our proprietary automation stack powers launches, audits, and
-            ongoing support for small businesses.
+            Monitored and made by 3 individuals looking to make the world a
+            better place to encourage play in every part of our culture and
+            around the world. To give the little guys, the underdogs a second
+            chance at life and arm them with invincible tech tools to secure
+            their freedom.
           </p>
         </section>
 

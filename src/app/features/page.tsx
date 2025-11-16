@@ -18,10 +18,8 @@ export default function FeaturesPage() {
 
         <section className="space-y-2">
           <p className="text-base text-white/80">
-            Customer nurturing runs quietly in the background—journeys,
-            reminders, and remarketing are prebuilt and ready for you. You
-            publish. The Genius Engine syndicates. Simple, consistent, and under
-            your ownership.
+            We operate around the world getting you what you need when you need
+            it.
           </p>
         </section>
       </main>

@@ -28,7 +28,8 @@ export default function HomePage() {
             CONTROL ALL OF YOUR ASSETS.
           </p>
           <p className="text-base text-white/80">
-            Quietly powering founders who want ownership without the noise.
+            Empowering the dreamers and the risk-takers around the world, built
+            in America, the Land of the Free.
           </p>
         </div>
         <div className="flex-1">
