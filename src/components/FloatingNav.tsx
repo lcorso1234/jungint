@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState, type SVGProps, type ReactNode } from "react";
 
 const navLinks = [
@@ -221,18 +221,35 @@ function MobileNextButton({ currentPath }: { currentPath: string }) {
   const currentIndex = navLinks.findIndex((link) => link.href === currentPath);
   const baseIndex = currentIndex === -1 ? homeIndex : currentIndex;
   const nextLink = navLinks[(baseIndex + 1) % navLinks.length];
+  const prevLink = navLinks[(baseIndex - 1 + navLinks.length) % navLinks.length];
+
+  // Use router for programmatic navigation so we can decide next/prev at click time
+  const { push } = useRouter();
+
+  const onClick: React.MouseEventHandler<HTMLAnchorElement> = (e) => {
+    // Decide direction by where the user taps: left half = Previous, right half = Next
+    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+    const clickX = e.clientX - rect.left;
+    const goPrev = clickX < rect.width / 2;
+    e.preventDefault();
+    push(goPrev ? prevLink.href : nextLink.href);
+  };
 
   return (
-    <Link
+    <a
       href={nextLink.href}
+      onClick={onClick}
       className="flex flex-1 items-center justify-between rounded-[8px] border border-white/25 bg-[#2a3237] px-4 py-3 text-xs font-semibold uppercase tracking-[0.3em] text-white transition hover:border-white/60"
-      aria-label={`Go to ${nextLink.label}`}
+      aria-label={`Tap right for ${nextLink.label}, left for ${prevLink.label}`}
     >
-      <span className="text-white/70">Next</span>
+      <span className="flex items-center gap-2 text-white/70">
+        <ArrowIcon className="h-4 w-4 text-white/70" reverse />
+        Prev
+      </span>
       <span className="flex items-center gap-2 text-sm">
         {nextLink.label}
         <ArrowIcon className="h-4 w-4 text-white" />
       </span>
-    </Link>
+    </a>
   );
 }
