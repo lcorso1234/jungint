@@ -19,7 +19,7 @@ const saveContactLink = {
 
 const callHref = "tel:+17089326851";
 const emailHref =
-  "mailto:contact@jungint.com?subject=Need%20tech%20support&body=Hi%20Jung%20Tech%20Team%2C%0A%0AI%20need%20help%20with...";
+  "mailto:lawrence@rumidesign.tech?subject=Let's%20Build%20My%20Platform&body=Hi%20Lawrence%2C%0A%0AI'm%20interested%20in%20building%20my%20own%20platform.%20Can%20we%20discuss%20how%20to%20get%20started%3F%0A%0AThanks!";
 
 const quickActions = [
   {
