@@ -2,7 +2,13 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useCallback, useState, type SVGProps, type ReactNode } from "react";
+import {
+  useCallback,
+  useState,
+  type MouseEventHandler,
+  type ReactNode,
+  type SVGProps,
+} from "react";
 
 const navLinks = [
   { label: "Home", href: "/" },
@@ -41,7 +47,7 @@ type MobileAction = {
   icon: (props: SVGProps<SVGSVGElement>) => ReactNode;
   download?: string;
   animate?: boolean;
-  onClick?: () => void;
+  onClick?: MouseEventHandler<HTMLAnchorElement>;
 };
 
 const mobileSaveAction: MobileAction = {
