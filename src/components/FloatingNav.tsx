@@ -5,7 +5,6 @@ import { usePathname, useRouter } from "next/navigation";
 import {
   useCallback,
   useState,
-  type MouseEventHandler,
   type ReactNode,
   type SVGProps,
 } from "react";
@@ -47,7 +46,7 @@ type MobileAction = {
   icon: (props: SVGProps<SVGSVGElement>) => ReactNode;
   download?: string;
   animate?: boolean;
-  onClick?: MouseEventHandler<HTMLAnchorElement>;
+  onClick?: () => void;
 };
 
 const mobileSaveAction: MobileAction = {
@@ -184,10 +183,7 @@ export default function FloatingNav() {
             <MobileActionButton
               {...mobileSaveAction}
               animate={!hasSavedContact}
-              onClick={(event) => {
-                event.preventDefault();
-                handleSaveContact();
-              }}
+              onClick={handleSaveContact}
             />
             <MobileNextButton currentPath={pathname} />
           </div>
@@ -294,12 +290,18 @@ function MobileActionButton({
   animate,
   onClick,
 }: MobileAction) {
+  const onActionClick: React.MouseEventHandler<HTMLAnchorElement> = (event) => {
+    if (!onClick) return;
+    event.preventDefault();
+    onClick();
+  };
+
   return (
     <a
       href={href}
       download={download}
       aria-label={label}
-      onClick={onClick}
+      onClick={onActionClick}
       className={`grid h-14 w-14 flex-shrink-0 place-items-center rounded-[8px] bg-gradient-to-br from-pink-500 to-amber-400 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_18px_35px_rgba(231,72,128,0.45)] transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/70 ${
         animate ? "motion-safe:animate-bounce" : "hover:-translate-y-[2px]"
       }`}
