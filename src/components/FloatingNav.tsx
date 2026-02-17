@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useState, type SVGProps, type ReactNode } from "react";
+import { useCallback, useState, type SVGProps, type ReactNode } from "react";
 
 const navLinks = [
   { label: "Home", href: "/" },
@@ -16,6 +16,7 @@ const saveContactLink = {
   href: "/contact.vcf",
   download: "jung-tech-contact.vcf",
 };
+const JUNG_SMS_NUMBER = "17089326851";
 
 const callHref = "tel:+17089326851";
 const emailHref =
@@ -49,23 +50,91 @@ const mobileSaveAction: MobileAction = {
   animate: true,
 };
 
+function sanitizePhoneForVCard(value: string) {
+  return value.replace(/[^\d+]/g, "");
+}
+
+function escapeVCardValue(value: string) {
+  return value.replace(/\\/g, "\\\\").replace(/;/g, "\\;").replace(/,/g, "\\,");
+}
+
 export default function FloatingNav() {
   const pathname = usePathname();
   const [hasSavedContact, setHasSavedContact] = useState(false);
+  const [isSmsPromptOpen, setIsSmsPromptOpen] = useState(false);
+  const [leadName, setLeadName] = useState("");
+  const [leadPhone, setLeadPhone] = useState("");
+  const [leadEmail, setLeadEmail] = useState("");
+  const [formError, setFormError] = useState("");
+
+  const handleSaveContact = useCallback(() => {
+    const link = document.createElement("a");
+    link.href = saveContactLink.href;
+    link.download = saveContactLink.download;
+    link.style.display = "none";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    setHasSavedContact(true);
+    window.setTimeout(() => {
+      setIsSmsPromptOpen(true);
+    }, 350);
+  }, []);
+
+  const handleSendSms = useCallback(() => {
+    const name = leadName.trim();
+    const email = leadEmail.trim();
+    const phone = leadPhone.trim();
+    const normalizedPhone = sanitizePhoneForVCard(phone);
+
+    if (!name || !email || !phone) {
+      setFormError("Enter name, email, and phone.");
+      return;
+    }
+
+    setFormError("");
+    const shareableVCard = [
+      "BEGIN:VCARD",
+      "VERSION:3.0",
+      `FN:${escapeVCardValue(name)}`,
+      `TEL;TYPE=CELL:${escapeVCardValue(normalizedPhone || phone)}`,
+      `EMAIL:${escapeVCardValue(email)}`,
+      "END:VCARD",
+    ].join("\n");
+
+    const smsBody = [
+      "Hi Jung Tech, I just saved your contact.",
+      "",
+      "My details:",
+      `Name: ${name}`,
+      `Phone: ${phone}`,
+      `Email: ${email}`,
+      "",
+      "Shareable contact:",
+      shareableVCard,
+    ].join("\n");
+
+    const isiOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    const separator = isiOS ? "&" : "?";
+    const smsHref = `sms:${JUNG_SMS_NUMBER}${separator}body=${encodeURIComponent(smsBody)}`;
+    window.location.href = smsHref;
+  }, [leadEmail, leadName, leadPhone]);
 
 
   return (
-    <nav className="fixed bottom-4 left-1/2 z-50 w-full max-w-5xl -translate-x-1/2 px-4">
+    <>
+      <nav className="fixed bottom-4 left-1/2 z-50 w-full max-w-5xl -translate-x-1/2 px-4">
       <div className="hidden items-center justify-between gap-4 rounded-[8px] border border-white/10 bg-[#353e43]/95 px-4 py-3 text-sm text-white shadow-[0_18px_45px_rgba(0,0,0,0.45)] backdrop-blur lg:flex">
         <div className="flex items-center">
-          <a
-            href={saveContactLink.href}
-            download={saveContactLink.download}
+          <button
+            type="button"
+            onClick={handleSaveContact}
             aria-label={saveContactLink.label}
             className="grid h-12 w-12 place-items-center rounded-[8px] bg-gradient-to-br from-pink-500 to-amber-400 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_18px_35px_rgba(231,72,128,0.45)] transition hover:-translate-y-[2px] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/70"
           >
             <BookmarkIcon className="h-6 w-6 text-white" />
-          </a>
+          </button>
         </div>
 
         <ul className="flex flex-1 items-center justify-center gap-3 text-white/80">
@@ -109,13 +178,105 @@ export default function FloatingNav() {
             <MobileActionButton
               {...mobileSaveAction}
               animate={!hasSavedContact}
-              onClick={() => setHasSavedContact(true)}
+              onClick={(event) => {
+                event.preventDefault();
+                handleSaveContact();
+              }}
             />
             <MobileNextButton currentPath={pathname} />
           </div>
         </div>
       </div>
-    </nav>
+
+      </nav>
+
+      {isSmsPromptOpen ? (
+        <div
+          className="fixed inset-0 z-[80] flex items-center justify-center bg-black/55 px-4"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Send text message with your details"
+          onClick={() => {
+            setFormError("");
+            setIsSmsPromptOpen(false);
+          }}
+        >
+          <div
+            className="w-full max-w-md rounded-2xl border border-white/20 bg-[#2d3439] p-5 text-white shadow-2xl"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <p className="text-xl font-bold text-white">Send a text now?</p>
+            <p className="mt-2 text-sm text-white/75">
+              Your contact is downloading. Add your details to prefill a text
+              and include a shareable contact card.
+            </p>
+
+            <label className="mt-4 block text-sm text-white/85" htmlFor="nav-lead-name">
+              Name
+            </label>
+            <input
+              id="nav-lead-name"
+              type="text"
+              value={leadName}
+              onChange={(event) => setLeadName(event.target.value)}
+              className="mt-1 w-full rounded-lg border border-white/25 bg-white/10 px-3 py-2 text-white outline-none placeholder:text-white/45 focus:border-white/60"
+              placeholder="Your full name"
+              autoComplete="name"
+            />
+
+            <label className="mt-3 block text-sm text-white/85" htmlFor="nav-lead-phone">
+              Phone number
+            </label>
+            <input
+              id="nav-lead-phone"
+              type="tel"
+              value={leadPhone}
+              onChange={(event) => setLeadPhone(event.target.value)}
+              className="mt-1 w-full rounded-lg border border-white/25 bg-white/10 px-3 py-2 text-white outline-none placeholder:text-white/45 focus:border-white/60"
+              placeholder="(555) 123-4567"
+              autoComplete="tel"
+            />
+
+            <label className="mt-3 block text-sm text-white/85" htmlFor="nav-lead-email">
+              Email
+            </label>
+            <input
+              id="nav-lead-email"
+              type="email"
+              value={leadEmail}
+              onChange={(event) => setLeadEmail(event.target.value)}
+              className="mt-1 w-full rounded-lg border border-white/25 bg-white/10 px-3 py-2 text-white outline-none placeholder:text-white/45 focus:border-white/60"
+              placeholder="you@example.com"
+              autoComplete="email"
+            />
+
+            {formError ? (
+              <p className="mt-3 text-sm text-[#ffb4b4]">{formError}</p>
+            ) : null}
+
+            <div className="mt-5 flex gap-3">
+              <button
+                type="button"
+                onClick={() => {
+                  setFormError("");
+                  setIsSmsPromptOpen(false);
+                }}
+                className="flex-1 rounded-lg border border-white/30 px-4 py-2 text-sm font-semibold text-white/90 transition hover:bg-white/10"
+              >
+                No thanks
+              </button>
+              <button
+                type="button"
+                onClick={handleSendSms}
+                className="flex-1 rounded-lg bg-white px-4 py-2 text-sm font-semibold text-[#2f383d] transition hover:bg-white/90"
+              >
+                Open SMS
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
+    </>
   );
 }
 

@@ -18,6 +18,7 @@ function escapeVCardValue(value: string) {
 
 export default function HomePage() {
   const [isSmsPromptOpen, setIsSmsPromptOpen] = useState(false);
+  const [leadName, setLeadName] = useState("");
   const [leadPhone, setLeadPhone] = useState("");
   const [leadEmail, setLeadEmail] = useState("");
   const [formError, setFormError] = useState("");
@@ -38,12 +39,13 @@ export default function HomePage() {
   }, []);
 
   const handleSendSms = useCallback(() => {
+    const name = leadName.trim();
     const email = leadEmail.trim();
     const phone = leadPhone.trim();
     const normalizedPhone = sanitizePhoneForVCard(phone);
 
-    if (!email || !phone) {
-      setFormError("Enter both email and phone.");
+    if (!name || !email || !phone) {
+      setFormError("Enter name, email, and phone.");
       return;
     }
 
@@ -52,7 +54,7 @@ export default function HomePage() {
     const shareableVCard = [
       "BEGIN:VCARD",
       "VERSION:3.0",
-      "FN:Web Lead",
+      `FN:${escapeVCardValue(name)}`,
       `TEL;TYPE=CELL:${escapeVCardValue(normalizedPhone || phone)}`,
       `EMAIL:${escapeVCardValue(email)}`,
       "END:VCARD",
@@ -62,6 +64,7 @@ export default function HomePage() {
       "Hi Jung Tech, I just saved your contact.",
       "",
       "My details:",
+      `Name: ${name}`,
       `Phone: ${phone}`,
       `Email: ${email}`,
       "",
@@ -74,7 +77,7 @@ export default function HomePage() {
     const smsHref = `sms:${JUNG_SMS_NUMBER}${separator}body=${encodeURIComponent(smsBody)}`;
 
     window.location.href = smsHref;
-  }, [leadEmail, leadPhone]);
+  }, [leadEmail, leadName, leadPhone]);
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-[#353e43] text-white">
@@ -123,6 +126,19 @@ export default function HomePage() {
               Your contact is downloading. Add your details to prefill a text
               and include a shareable contact card.
             </p>
+
+            <label className="mt-4 block text-sm text-white/85" htmlFor="lead-name">
+              Name
+            </label>
+            <input
+              id="lead-name"
+              type="text"
+              value={leadName}
+              onChange={(event) => setLeadName(event.target.value)}
+              className="mt-1 w-full rounded-lg border border-white/25 bg-white/10 px-3 py-2 text-white outline-none placeholder:text-white/45 focus:border-white/60"
+              placeholder="Your full name"
+              autoComplete="name"
+            />
 
             <label className="mt-4 block text-sm text-white/85" htmlFor="lead-phone">
               Phone number
