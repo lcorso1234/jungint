@@ -99,6 +99,7 @@ export default function FloatingNav() {
     }
 
     setFormError("");
+    const contactUrl = `${window.location.origin}${saveContactLink.href}`;
     const shareableVCard = [
       "BEGIN:VCARD",
       "VERSION:3.0",
@@ -116,7 +117,10 @@ export default function FloatingNav() {
       `Phone: ${phone}`,
       `Email: ${email}`,
       "",
-      "Shareable contact:",
+      "Tap to install Jung Tech contact:",
+      contactUrl,
+      "",
+      "My shareable contact card:",
       shareableVCard,
     ].join("\n");
 
