@@ -9,9 +9,11 @@ export default function FeaturesPage() {
         </section>
 
         <section className="space-y-2">
-          <p className="text-4xl font-semibold text-white">Podcast</p>
+          <p className="text-4xl font-semibold text-white">
+            Cheshire Cat Website
+          </p>
           <ul className="list-disc space-y-2 pl-6 text-base text-white/80">
-            <li>Do what you want when you want it on your own podcast.</li>
+            <li>Do what you want when you want it on your own website.</li>
             <li>
               No more dealing with the narcists of the world. Show your genius
               for once, God Damnit!!!
