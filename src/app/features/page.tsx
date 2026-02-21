@@ -10,7 +10,7 @@ export default function FeaturesPage() {
 
         <section className="space-y-2">
           <p className="text-4xl font-semibold text-white">
-            Cheshire Cat Website
+            Cheshire Cat Website Podcast
           </p>
           <ul className="list-disc space-y-2 pl-6 text-base text-white/80">
             <li>Do what you want when you want it on your own website.</li>
