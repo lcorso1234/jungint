@@ -65,6 +65,10 @@ function escapeVCardValue(value: string) {
 
 export default function FloatingNav() {
   const pathname = usePathname();
+  const isBenefitsPage = pathname === "/benefits";
+  const saveButtonThemeClass = isBenefitsPage
+    ? "bg-gradient-to-br from-[#00d965] via-[#42ff7e] to-[#b6ff47] shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_18px_35px_rgba(72,231,124,0.45)]"
+    : "bg-gradient-to-br from-pink-500 to-amber-400 shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_18px_35px_rgba(231,72,128,0.45)]";
   const [hasSavedContact, setHasSavedContact] = useState(false);
   const [isSmsPromptOpen, setIsSmsPromptOpen] = useState(false);
   const [leadName, setLeadName] = useState("");
@@ -140,7 +144,7 @@ export default function FloatingNav() {
             type="button"
             onClick={handleSaveContact}
             aria-label={saveContactLink.label}
-            className="grid h-12 w-12 place-items-center rounded-[8px] bg-gradient-to-br from-pink-500 to-amber-400 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_18px_35px_rgba(231,72,128,0.45)] transition hover:-translate-y-[2px] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/70"
+            className={`grid h-12 w-12 place-items-center rounded-[8px] text-white transition hover:-translate-y-[2px] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/70 ${saveButtonThemeClass}`}
           >
             <BookmarkIcon className="h-6 w-6 text-white" />
           </button>
@@ -186,8 +190,10 @@ export default function FloatingNav() {
           <div className="flex items-center gap-3">
             <MobileActionButton
               {...mobileSaveAction}
+              icon={isBenefitsPage ? HeartIcon : ContactCardIcon}
               animate={!hasSavedContact}
               onClick={handleSaveContact}
+              themeClassName={saveButtonThemeClass}
             />
             <MobileNextButton currentPath={pathname} />
           </div>
@@ -293,7 +299,8 @@ function MobileActionButton({
   download,
   animate,
   onClick,
-}: MobileAction) {
+  themeClassName,
+}: MobileAction & { themeClassName?: string }) {
   const onActionClick: React.MouseEventHandler<HTMLAnchorElement> = (event) => {
     if (!onClick) return;
     event.preventDefault();
@@ -306,7 +313,10 @@ function MobileActionButton({
       download={download}
       aria-label={label}
       onClick={onActionClick}
-      className={`grid h-14 w-14 flex-shrink-0 place-items-center rounded-[8px] bg-gradient-to-br from-pink-500 to-amber-400 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_18px_35px_rgba(231,72,128,0.45)] transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/70 ${
+      className={`grid h-14 w-14 flex-shrink-0 place-items-center rounded-[8px] text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/70 ${
+        themeClassName ??
+        "bg-gradient-to-br from-pink-500 to-amber-400 shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_18px_35px_rgba(231,72,128,0.45)]"
+      } ${
         animate ? "motion-safe:animate-bounce" : "hover:-translate-y-[2px]"
       }`}
     >
@@ -360,6 +370,19 @@ function ContactCardIcon(props: SVGProps<SVGSVGElement>) {
   );
 }
 
+function HeartIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" {...props}>
+      <path
+        d="M12 20.4s-6.9-4.5-8.6-8.1C2 9.3 3.2 6.5 6 5.6c2-.7 3.8 0 5 1.6 1.2-1.6 3-2.3 5-1.6 2.8.9 4 3.7 2.6 6.7-1.7 3.6-8.6 8.1-8.6 8.1z"
+        strokeWidth={1.8}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
 function ArrowIcon({
   reverse,
   ...props
@@ -393,6 +416,7 @@ function MobileNextButton({ currentPath }: { currentPath: string }) {
   const homeIndex = navLinks.findIndex((link) => link.href === "/");
   const currentIndex = navLinks.findIndex((link) => link.href === currentPath);
   const baseIndex = currentIndex === -1 ? homeIndex : currentIndex;
+  const currentLink = navLinks[baseIndex];
   const nextLink = navLinks[(baseIndex + 1) % navLinks.length];
   const prevLink = navLinks[(baseIndex - 1 + navLinks.length) % navLinks.length];
 
@@ -420,7 +444,7 @@ function MobileNextButton({ currentPath }: { currentPath: string }) {
         Prev
       </span>
       <span className="flex items-center gap-2 text-sm">
-        {nextLink.label}
+        {currentLink.label}
         <ArrowIcon className="h-4 w-4 text-white" />
       </span>
     </a>
