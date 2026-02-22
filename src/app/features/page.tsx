@@ -45,7 +45,7 @@ export default function FeaturesPage() {
         </section>
 
         <section>
-          <p className="text-sm uppercase tracking-[0.28em] text-[#8dffb0]">
+          <p className="text-sm uppercase tracking-[0.28em] text-pink-200/90">
             Logic by &quot;Omii&quot;
           </p>
         </section>
